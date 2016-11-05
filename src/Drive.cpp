@@ -1,0 +1,268 @@
+#include "WPILib.h"
+#include "Drive.hpp"
+#include "XCaliberShared.hpp"
+
+
+#define diameter 7.8884
+#define pi 3.14159265359
+
+//extern bool AutoCondition;
+//extern double overArching;
+
+Drive::Drive(){
+	JS = new Joystick(0);
+	Buttons = new Joystick(1);
+
+	lowBar = new Solenoid(1);
+	LeftFront = new CANTalon(2);
+	LeftRear = new CANTalon(4);
+	RightFront = new CANTalon(1);
+	RightRear = new CANTalon(3);
+	GearShifter = new Solenoid(0);
+
+	SpeedBase=new RobotDrive(LeftFront, LeftRear, RightFront, RightRear);
+
+	SpeedBase -> SetInvertedMotor(RobotDrive::kFrontLeftMotor, true);
+	SpeedBase -> SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+	SpeedBase -> SetInvertedMotor(RobotDrive::kRearLeftMotor, true);
+	SpeedBase -> SetInvertedMotor(RobotDrive::kRearRightMotor, true);
+
+	//navX = new AnalogGyro(0);
+	//navX ->Calibrate();
+
+    StopWatch = new Timer;
+
+    distance=0;
+    Shift = false;
+    rightEnc = new Encoder(0, 1, true, Encoder::EncodingType::k4X);
+    leftEnc = new Encoder(2, 3, false, Encoder::EncodingType::k4X);
+	//rightEnc->SetMaxPeriod(0.1);
+	rightEnc ->SetMinRate(10);
+	circum = diameter * pi;
+	rightEnc ->SetDistancePerPulse(circum / 256);
+
+	//leftEnc->SetMaxPeriod(0.1);
+	leftEnc ->SetMinRate(10);
+	leftEnc ->SetDistancePerPulse(circum / 256);
+
+}
+
+void Drive::AutoInit(){
+
+	rightEnc->Reset();
+    leftEnc->Reset();
+
+    desired_speed = .6;
+}
+
+void Drive::Auto(){
+
+	switch(AutoMode){
+		case 1:
+			//while(abs(rightEnc->Get()) <= 256){
+			//rightEnc->Reset();
+			//printf("OVERARCHING: %f\n\n", overArching);
+			//SpeedBase->SetLeftRightMotorOutputs(0.3,0.3);
+			if(overArching < 5.0){
+				LeftFront->Set(-0.75);
+				LeftRear->Set(-0.75);
+				RightFront->Set(0.75);
+				RightRear->Set(0.75);
+			}
+			else if(overArching >= 5.0){
+				LeftFront->Set(0);
+				LeftRear->Set(0);
+				RightFront->Set(0);
+				RightRear->Set(0);
+				//AutoCondition=true;
+			}
+			//using CANTalons allowed for aspeed control signature allowing me to use Set() still with Cantalons
+			//SpeedBase->SetLeftRightMotorOutputs(0.8,0.85);
+			//distance = rightEnc -> Count();
+			//printf("distance: %f\n", rightEnc->Get());
+
+			//}
+			//SpeedBase->SetLeftRightMotorOutputs(0,0);
+			//Wait(100);
+
+			break;
+		case 2:
+	/*
+	 		if(overArching < 5){
+				AutoCondition= true;
+				LeftFront->Set(0.0);
+				LeftRear->Set(0.0);
+				RightFront->Set(0.0);
+				RightRear->Set(0.0);
+				Wait(0.001);
+			}
+			else if(overArching >= 5 && overArching <9){
+				AutoCondition=false;
+				LeftFront->Set(0.8);
+				LeftRear->Set(0.8);
+				RightFront->Set(-0.2);
+				RightRear->Set(-0.2);
+				Wait(0.0001);
+				AutoCondition=true;
+			}
+			else if(overArching >= 9 && overArching <= 11){
+				LeftFront->Set(0.71);
+				LeftRear->Set(0.71);
+				RightFront->Set(-0.71);
+				RightRear->Set(-0.71);
+				Wait(0.0001);
+				AutoCondition=false;
+			}
+			else {
+				LeftFront->Set(0);
+				LeftRear->Set(0);
+				RightFront->Set(0);
+				RightRear->Set(0);
+				Wait(0.0001);
+			}
+*/
+			break;
+		case 3:
+			if(overArching < 3.0){
+
+				LeftFront->Set(1.0);
+				LeftRear->Set(1.0);
+				RightFront->Set(-1.0);
+				RightRear->Set(-1.0);
+
+			}
+			else if(overArching >= 3.0){
+
+				LeftFront->Set(0);
+				LeftRear->Set(0);
+				RightFront->Set(0);
+				RightRear->Set(0);
+							}
+			break;
+		case 4:
+			if(overArching < 2.5){
+				LeftFront->Set(1.0);
+				LeftRear->Set(1.0);
+				RightFront->Set(-1.0);
+				RightRear->Set(-1.0);
+				Wait(0.001);
+			}
+			else if(overArching >= 2.5 && overArching <9){
+				LeftFront->Set(0);
+				LeftRear->Set(0);
+				RightFront->Set(0);
+				RightRear->Set(0);
+				Wait(0.0001);
+				AutoCondition=true;
+			}
+			else if(overArching >= 9 && overArching <= 11){
+				LeftFront->Set(-1);
+				LeftRear->Set(-1);
+				RightFront->Set(1);
+				RightRear->Set(1);
+				Wait(0.0001);
+				AutoCondition=false;
+			}
+			else {
+				LeftFront->Set(0);
+				LeftRear->Set(0);
+				RightFront->Set(0);
+				RightRear->Set(0);
+				Wait(0.0001);
+			}
+			break;
+
+		case 5:
+			if (abs(rightEnc->GetDistance()) < 96.0)  // travel straight 8 feet
+			{
+				LeftFront->Set(-desired_speed);
+				LeftRear->Set(-desired_speed);
+				RightFront->Set(desired_speed);
+				RightRear->Set(desired_speed);
+				printf(" 1 distance: %f\n", rightEnc->GetDistance());
+			}
+			if (abs(rightEnc->GetDistance()) >= 96.0)  // travel left 45 degrees for 4ft
+			{
+				if (abs(rightEnc->GetDistance()) <= (96.0+33.8+48.0))  // travel left 45 degrees
+				{
+				   printf(" 2 distance: %f\n", rightEnc->GetDistance());
+			       LeftFront->Set(0);
+				   LeftRear->Set(0);
+				   RightFront->Set(desired_speed);
+				   RightRear->Set(desired_speed);
+				   if (abs(rightEnc->GetDistance()) > (96.0+33.8))  // travel straight for 4ft
+				   {
+					   printf(" 3 distance: %f\n", rightEnc->GetDistance());
+					   LeftFront->Set(-desired_speed);
+					   LeftRear->Set(-desired_speed);
+					   RightFront->Set(desired_speed);
+					   RightRear->Set(desired_speed);
+				   }
+				}
+				else
+				{
+				   printf(" 4 distance: %f\n", rightEnc->GetDistance());
+				   LeftFront->Set(0);
+				   LeftRear->Set(0);
+				   RightFront->Set(0);
+				   RightRear->Set(0);
+				}
+			}
+			break;
+
+		case 6:
+			break;
+
+		case 7:
+			break;
+
+		default:
+			 printf("No Autonomous Chosen");
+			 break;
+	}
+
+}
+
+
+/*void Drive::AutoPeriodic(){
+	printf("%i\n", rightEnc->GetRaw());
+	if(abs(rightEnc->GetRaw()) > 256){
+		//SpeedBase->SetLeftRightMotorOutputs(0,0);
+		LeftFront->Set(0);
+		LeftRear->Set(0);
+		RightFront->Set(0);
+		RightRear->Set(0);
+	}
+}*/
+
+void Drive::ObstacleOne(){
+	if(Buttons->GetRawButton(4)){
+		lowBar->Set(true);
+	}
+
+}
+
+void Drive::TeleOp(){
+
+	SpeedBase ->ArcadeDrive(JS, true);
+
+
+Wait(0.003);
+
+Shift = JS->GetRawButton(1);	// Shift - safety button
+
+ if (Shift) {
+ 		// Engage pnuematic shifter
+ 		GearShifter->Set(true);
+		printf("shift true\n");
+	}
+	else {
+		// Disengage pnuematic shifter
+		GearShifter->Set(false);
+	}
+
+}
+
+Drive::~Drive(){
+
+}
