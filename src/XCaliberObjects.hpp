@@ -11,20 +11,20 @@
 #include "WPILib.h"
 #include "Drive.hpp"
 #include "Launcher.hpp"
-#include "Lifter.hpp"
-#include "Camera.hpp"
+//#include "Lifter.hpp"
+//#include "Camera.hpp"
 
 Drive* myDrive;
 Launcher* myLauncher;
-Lifter* myLifter;
-Camera* myCamera;
+//Lifter* myLifter;
+//Camera* myCamera;
 Compressor* c;
 
 inline void initialize(){
 	myDrive = new Drive();
 	myLauncher=new Launcher();
-	myLifter = new Lifter();
-	myCamera = new Camera();
+	//myLifter = new Lifter();
+	//myCamera = new Camera();
 	c = new Compressor();
 }
 

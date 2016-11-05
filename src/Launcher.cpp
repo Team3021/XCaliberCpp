@@ -22,7 +22,7 @@ Launcher::Launcher() {
 	//old code  32.4 degrees
 	//NEW BOT 30.7
 	lFeedback = new AnalogPotentiometer(0, 30.7,0.0); //second number full range with base (0 degrees) at lowest point
-	puncher = new Solenoid(2); //In competition it is 2
+	puncher = new Solenoid(3); //In competition it is 2
 	spike = new Relay(0);
 	launchStopwatch = new Timer();
 
@@ -69,7 +69,7 @@ void Launcher::Auto(){
 
 		//if(overArching < 6){
 		//printf("%f\n\n",overArching);
-		//launchWheel->Set(0.85);
+		//launchWheel->Set(-0.85);
 		//Wait(0.001);
 //unique //speed
 
@@ -172,9 +172,9 @@ void Launcher::TeleOp(){ //CHANGE FOR COMPETITION; REVERSE POLARITY OF MOTOR VAL
 	/*if(Buttons->GetRawButton(4)){
 
 		if(Buttons->GetRawButton(1)){
-			launchWheel->Set(1);
+			launchWheel->Set(-1);
 		}else{
-			launchWheel->Set(0.85);
+			launchWheel->Set(-0.85);
 		}
 
 		if(fire){

@@ -88,8 +88,8 @@ void XCaliber::TeleopPeriodic(){
 
 	myDrive->TeleOp();
 	myLauncher->TeleOp();
-	myLifter -> TeleOp();
-	myCamera->TeleOp();  // Comment if you do not want multiple cams
+	//myLifter -> TeleOp();
+	//myCamera->TeleOp();  // Comment if you do not want multiple cams
 
 }
 

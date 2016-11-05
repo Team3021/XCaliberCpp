@@ -18,7 +18,7 @@ Drive::Drive(){
 	LeftRear = new CANTalon(4);
 	RightFront = new CANTalon(1);
 	RightRear = new CANTalon(3);
-	GearShifter = new Solenoid(0);
+//	GearShifter = new Solenoid(0);
 
 	SpeedBase=new RobotDrive(LeftFront, LeftRear, RightFront, RightRear);
 
@@ -32,8 +32,10 @@ Drive::Drive(){
 
     StopWatch = new Timer;
 
+ /*
     distance=0;
     Shift = false;
+
     rightEnc = new Encoder(0, 1, true, Encoder::EncodingType::k4X);
     leftEnc = new Encoder(2, 3, false, Encoder::EncodingType::k4X);
 	//rightEnc->SetMaxPeriod(0.1);
@@ -44,15 +46,15 @@ Drive::Drive(){
 	//leftEnc->SetMaxPeriod(0.1);
 	leftEnc ->SetMinRate(10);
 	leftEnc ->SetDistancePerPulse(circum / 256);
-
+*/
 }
 
 void Drive::AutoInit(){
 
-	rightEnc->Reset();
-    leftEnc->Reset();
+//  rightEnc->Reset();
+//  leftEnc->Reset();
 
-    desired_speed = .6;
+//    desired_speed = .6;
 }
 
 void Drive::Auto(){
@@ -173,7 +175,9 @@ void Drive::Auto(){
 			break;
 
 		case 5:
-			if (abs(rightEnc->GetDistance()) < 96.0)  // travel straight 8 feet
+
+ /*
+ 	 	 	if (abs(rightEnc->GetDistance()) < 96.0)  // travel straight 8 feet
 			{
 				LeftFront->Set(-desired_speed);
 				LeftRear->Set(-desired_speed);
@@ -208,6 +212,7 @@ void Drive::Auto(){
 				   RightRear->Set(0);
 				}
 			}
+*/
 			break;
 
 		case 6:
@@ -248,7 +253,7 @@ void Drive::TeleOp(){
 
 
 Wait(0.003);
-
+/*
 Shift = JS->GetRawButton(1);	// Shift - safety button
 
  if (Shift) {
@@ -260,7 +265,7 @@ Shift = JS->GetRawButton(1);	// Shift - safety button
 		// Disengage pnuematic shifter
 		GearShifter->Set(false);
 	}
-
+*/
 }
 
 Drive::~Drive(){

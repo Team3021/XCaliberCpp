@@ -10,21 +10,21 @@ class Drive{
 		CANTalon *LeftFront;
 
 		Solenoid *lowBar;
-		Solenoid *GearShifter;
+//		Solenoid *GearShifter;
 		Joystick* Buttons;
 
 		RobotDrive *SpeedBase;
-		Encoder *leftEnc;
-		Encoder *rightEnc;
+	//	Encoder *leftEnc;
+	//	Encoder *rightEnc;
 		Timer *StopWatch;
 		Joystick *JS;
 		AnalogGyro *navX;
-		double distance;
-		double circum;
+	//	double distance;
+	//	double circum;
 
-		bool Shift;
+	//	bool Shift;
 
-		double desired_speed;
+	//	double desired_speed;
 
 
 	public:
